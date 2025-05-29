@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>نمرات</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      direction: rtl;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      border-bottom: 2px solid #27ae60;
+      padding-bottom: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #27ae60;
+      color: white;
+      font-weight: 700;
+    }
+
+    tr:hover {
+      background-color: #e6f4ea;
+    }
+
+    .passed {
+      color: #27ae60;
+      font-weight: 500;
+    }
+
+    .failed {
+      color: #e74c3c;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>نمرات</h2>
+    <p>جدول نمرات شما:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>درس</th>
+          <th>نمره</th>
+          <th>تعداد واحد</th>
+          <th>وضعیت</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>نرم افزار ریاضی</td>
+          <td>20</td>
+          <td>3</td>
+          <td class="passed">قبول</td>
+        </tr>
+        <tr>
+          <td>زبان های برنامه نویسی</td>
+          <td>20</td>
+          <td>3</td>
+          <td class="passed">قبول</td>
+        </tr>
+        <tr>
+          <td>شبیه سازی</td>
+          <td>13</td>
+          <td>3</td>
+          <td class="passed">قبول</td>
+        </tr>
+        <tr>
+          <td>ترکیبیات</td>
+          <td>8</td>
+          <td>3</td>
+          <td class="failed">مردود</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

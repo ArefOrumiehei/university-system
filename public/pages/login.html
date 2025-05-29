@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ورود به سامانه</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: #285c90;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      direction: rtl;
+    }
+
+    .container {
+      background-color: #e4e4e46b;
+      padding: 20px 28px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 8px;
+      border-radius: 20px;
+      min-width: 350px;
+    }
+
+    .title {
+      color: #1a237e;
+      font-size: 1.6rem;
+    }
+
+    .form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      width: 90%;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 4px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      font-family: "Vazirmatn", sans-serif;
+    }
+
+    .btn {
+      background-color: #1a237e;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-family: "Vazirmatn", sans-serif;
+      width: 100%;
+    }
+
+    .btn:hover {
+      background-color: #3949ab;
+    }
+
+    a {
+      text-decoration: none;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="title">ورود به سامانه</h2>
+    <div class="form">
+      <input id="username" type="text" placeholder="نام کاربری">
+      <input id="password" type="password" placeholder="رمز عبور">
+      <div id="loginError" style="color:red;"></div>
+      <button class="btn" onclick="login()">ورود</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000/api';
+
+    async function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      let errorMsg = document.getElementById('loginError')
+      errorMsg.innerText = ""
+
+      if (user && pass) {
+        try {
+          const res = await fetch(`${API_BASE}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, password: pass }),
+          });
+          console.log(res);
+          const data = await res.json();
+          console.log(data);
+
+          if (data.error) {
+            errorMsg.innerText = data.error;
+            return
+          }
+
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userId', data.userId);
+
+          window.location.href = '/public/pages/dashboard.html';
+        } catch (error) {
+          errorMsg.innerText = error.message;
+        }
+      } else {
+        errorMsg.innerText = "لطفا نام کاربری و رمز خود را وارد کنید."
+      }
+    }
+  </script>
+</body>
+</html>
