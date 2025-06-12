@@ -1,3 +1,46 @@
-.vscode
+# Node.js dependencies
+node_modules/
 
-node_modules
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Environment files
+.env
+.env.*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Build or cache directories
+dist/
+build/
+.cache/
+.tmp/
+
+# IDE/editor folders
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Optional: Ignore coverage reports
+coverage/
+
+# Optional: Ignore uploads or user-generated files (if any)
+uploads/
+public/uploads/
+
+.vscode
