@@ -1,4 +1,4 @@
-export function showToast(message, type = 'success') {
+function showToast(message, type = 'success') {
   const toast = document.createElement('div');
   toast.textContent = message;
   toast.style.cssText = `
