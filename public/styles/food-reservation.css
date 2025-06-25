@@ -30,6 +30,14 @@ body {
   z-index: 100;
 }
 
+.inputs {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
 button {
   background-color: #28a745;
   color: white;
