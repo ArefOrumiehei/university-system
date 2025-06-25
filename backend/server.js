@@ -8,10 +8,7 @@ app.use(express.json());
 
 connectDB();
 
-// وارد کردن مسیر ها
 app.use("/api", require("./routes/api"));
-
-
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

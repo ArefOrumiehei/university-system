@@ -1,11 +1,10 @@
 const User = require("../models/User");
 const Reservation = require("../models/Reservation");
-
-
-// لاگین ساده (برای مثال فقط نام کاربری و رمز عبور ساده)
 const jwt = require("jsonwebtoken");
-const SECRET_KEY = process.env.JWT_SECRET || "mysecretkey"; // از .env بخون
 
+const SECRET_KEY = process.env.JWT_SECRET || "mysecretkey";
+
+// POST /login
 async function loginUser(req, res) {
   const { username, password } = req.body;
   if (!username || !password) {
@@ -23,11 +22,11 @@ async function loginUser(req, res) {
       }
     }
 
-    // ساخت توکن
+    // Create Token
     const token = jwt.sign(
       { userId: user._id, username: user.username },
       SECRET_KEY,
-      { expiresIn: "7d" } // مثلاً ۷ روز اعتبار
+      { expiresIn: "7d" }
     );
 
     res.json({
@@ -41,6 +40,7 @@ async function loginUser(req, res) {
   }
 }
 
+// POST /signup
 const signupUser = async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -49,7 +49,6 @@ const signupUser = async (req, res) => {
   }
 
   try {
-    // بررسی تکراری نبودن یوزرنیم یا ایمیل
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       return res.status(409).json({ error: "کاربری با این نام یا ایمیل وجود دارد" });
@@ -64,7 +63,6 @@ const signupUser = async (req, res) => {
 
     await newUser.save();
 
-    // ساخت توکن پس از ثبت‌نام
     const token = jwt.sign(
       { userId: newUser._id, username: newUser.username },
       SECRET_KEY,
@@ -96,12 +94,11 @@ async function getUserInfo(req, res) {
   }
 }
 
-// update profile PUT /users/:userId
+// Update Profile PUT /users/:userId
 async function updateUserProfile(req, res) {
   try {
     const { username, profileImage, birthDate } = req.body;
 
-    // ساخت آبجکت برای به‌روزرسانی فقط فیلدهای موجود
     const updates = {};
     if (username && username.trim() !== "") {
       updates.username = username.trim();
@@ -135,9 +132,7 @@ async function updateUserProfile(req, res) {
 }
 
 
-
-
-// گرفتن موجودی کاربر
+// GET /users/:userId/balance
 async function getBalance(req, res) {
   try {
     const user = await User.findById(req.params.userId);
@@ -151,7 +146,7 @@ async function getBalance(req, res) {
 }
 
 
-// افزایش موجودی کاربر
+// POST /users/:userId/increase
 async function increaseBalance(req, res) {
   const { amount, userId } = req.body;
   const user = await User.findById(userId);
@@ -164,7 +159,7 @@ async function increaseBalance(req, res) {
   res.json({ balance: user.balance });
 }
 
-// گرفتن لیست رزروهای کاربر
+// GET /reservations/:userId
 async function getReservations(req, res) {
   const userId = req.params.userId || req.body.userId;
 
@@ -187,9 +182,9 @@ const foodPrices = {
   'ماکارونی': 60000,
   'چلوکباب': 80000,
   'زرشک‌پلو': 70000,
-  // Other foods
 };
 
+// POST /reservations
 async function makeReservation(req, res) {
   const { userId, date, foodName, restaurant, foodPrice } = req.body;
 
@@ -228,7 +223,7 @@ async function makeReservation(req, res) {
 
 
 
-// حذف رزرو بر اساس یوزر و تاریخ
+// DELETE /reservations/:userId/:date
 async function deleteReservation(req, res) {
   const { userId, date } = req.params;
 
@@ -242,7 +237,7 @@ async function deleteReservation(req, res) {
     const refundAmount = reservation.foodPrice;
     await Reservation.deleteOne({ _id: reservation._id });
 
-    // افزایش موجودی کاربر
+    // Return food price to user balance
     const updateResult = await User.findByIdAndUpdate(
       userId,
       { $inc: { balance: refundAmount } },
