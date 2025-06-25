@@ -1,23 +1,44 @@
+import { showToast } from "../../utils/toast.js";
+
 const API_BASE = 'http://localhost:3000/api';
-
-// elems
-const foodsDiv = document.getElementById('foods');
-const reservationListDiv = document.querySelector('.reservation-list')
-const balanceSpan = document.getElementById('balance');
-let balance = 0;
-
-// local storage
-const userId = localStorage.getItem('userId');
-
-// variables
-let foods = [
+const foods = [
   { name: 'چلوکباب', price: 80000, img: '../../assets/images/foods/kebab.jpeg' },
   { name: 'زرشک‌پلو', price: 70000, img: '../../assets/images/foods/zereshk-polo-morgh.jpg' },
   { name: 'ماکارونی', price: 60000, img: '../../assets/images/foods/makaroni.jpg' },
 ];
 
+let balance = 0;
 let selectedFoodIndex = null;
+const userId = localStorage.getItem('userId');
 
+// DOM Elements
+const foodsDiv = document.getElementById('foods');
+const balanceSpan = document.getElementById('balance');
+const reservationListDiv = document.querySelector('.reservation-list');
+
+// Initial Setup
+window.addEventListener("DOMContentLoaded", () => {
+  fetchBalance();
+  renderFoods();
+  loadReservations();
+
+  document.getElementById('reserveBtn')?.addEventListener('click', addReservation);
+  document.getElementById('toggleButton')?.addEventListener('click', toggleAmountOptions);
+
+  document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const amount = parseInt(btn.dataset.amount);
+      if (!isNaN(amount)) increaseBalance(amount);
+    });
+  });
+
+  window.addEventListener('click', (e) => {
+    const menu = document.getElementById("amountOptions");
+    if (!e.target.closest("#amountOptions") && !e.target.closest("#toggleButton")) {
+      menu.style.display = "none";
+    }
+  });
+});
 
 async function fetchBalance() {
   try {
@@ -27,33 +48,29 @@ async function fetchBalance() {
       balance = data.balance;
       balanceSpan.innerText = balance.toLocaleString();
     }
-  } catch (err) {
+  } catch {
     showToast('خطا در دریافت موجودی', 'error');
   }
 }
-
 
 async function increaseBalance(amount) {
   try {
     const res = await fetch(`${API_BASE}/users/${userId}/increase`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, userId: userId })
+      body: JSON.stringify({ amount, userId })
     });
-
     const data = await res.json();
-
     if (res.ok) {
       await fetchBalance();
       showToast('موجودی با موفقیت افزایش یافت', 'success');
     } else {
       showToast(data.error || 'خطا در افزایش موجودی', 'error');
     }
-  } catch (err) {
+  } catch {
     showToast('خطا در ارتباط با سرور', 'error');
   }
 }
-
 
 function renderFoods() {
   foodsDiv.innerHTML = '';
@@ -64,8 +81,9 @@ function renderFoods() {
       <img src="${food.img}" alt="${food.name}" />
       <div>${food.name}</div>
       <div>${food.price.toLocaleString()} تومان</div>
-      <button onclick="selectFood(${index})">انتخاب</button>
+      <button class="select-food-btn">انتخاب</button>
     `;
+    div.querySelector('.select-food-btn').addEventListener('click', () => selectFood(index));
     foodsDiv.appendChild(div);
   });
 }
@@ -80,47 +98,24 @@ async function addReservation() {
   const date = document.getElementById('date').value;
   const restaurant = document.getElementById('restaurant').value;
 
-  if (selectedFoodIndex === null || selectedFoodIndex === undefined) {
-    showToast('لطفا ابتدا یک غذا انتخاب کنید', 'error');
-    return;
-  }
-  if (!date) {
-    showToast('لطفا تاریخ را انتخاب کنید', 'error');
-    return;
-  }
-  if (!userId) {
-    showToast('کاربر وارد نشده است', 'error');
-    return;
-  }
+  if (selectedFoodIndex == null) return showToast('لطفا ابتدا یک غذا انتخاب کنید', 'error');
+  if (!date) return showToast('لطفا تاریخ را انتخاب کنید', 'error');
+  if (!userId) return showToast('کاربر وارد نشده است', 'error');
 
   const selectedDate = new Date(date);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  if (selectedDate < today) return showToast("رزرو برای تاریخ گذشته مجاز نیست", "error");
 
-  if (selectedDate < today) {
-    return showToast("رزرو برای تاریخ گذشته مجاز نیست", "error");
-  }
-
-  const selectedFood = foods[selectedFoodIndex];
-  const foodName = selectedFood.name;
-  const foodPrice = selectedFood.price;
-
-  if (balance < foodPrice) {
-    showToast('موجودی شما برای رزرو این غذا کافی نیست', 'error');
-    return;
-  }
+  const { name: foodName, price: foodPrice } = foods[selectedFoodIndex];
+  if (balance < foodPrice) return showToast('موجودی شما برای رزرو این غذا کافی نیست', 'error');
 
   try {
     const res = await fetch(`${API_BASE}/reservations`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, date, foodName, restaurant, foodPrice }),
     });
-
     const data = await res.json();
-
     if (res.ok) {
       await fetchBalance();
       showToast('رزرو با موفقیت ثبت شد', 'success');
@@ -131,15 +126,13 @@ async function addReservation() {
     } else {
       showToast(data.error || 'خطا در ثبت رزرو', 'error');
     }
-  } catch (err) {
+  } catch {
     showToast('خطا در ارتباط با سرور', 'error');
   }
 }
 
-
 async function loadReservations() {
   if (!userId) return;
-
   try {
     const res = await fetch(`${API_BASE}/reservations/${userId}`);
     if (!res.ok) throw new Error('خطا در دریافت رزروها');
@@ -148,27 +141,23 @@ async function loadReservations() {
     const tbody = document.getElementById('reservationTable');
     tbody.innerHTML = '';
 
-
-    if (reservations.length === 0) {
-  reservationListDiv.style.display = 'none';
-} else {
-  reservationListDiv.style.display = 'block';
-
-  reservations.forEach(r => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${r.date}</td>
-      <td>${r.foodName}</td>
-      <td>${r.restaurant}</td>
-      <td><button class="delete-btn" onclick="deleteReservation('${r.userId}', '${r.date}')" style="background: tomato">حذف</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-    
+    reservationListDiv.style.display = reservations.length ? 'block' : 'none';
+    reservations.forEach(r => tbody.appendChild(createReservationRow(r)));
   } catch (err) {
     showToast(err.message, 'error');
   }
+}
+
+function createReservationRow(reservation) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${reservation.date}</td>
+    <td>${reservation.foodName}</td>
+    <td>${reservation.restaurant}</td>
+    <td><button class="delete-btn" style="background: tomato">حذف</button></td>
+  `;
+  tr.querySelector('.delete-btn').addEventListener('click', () => deleteReservation(reservation.userId, reservation.date));
+  return tr;
 }
 
 async function deleteReservation(userId, date) {
@@ -178,9 +167,7 @@ async function deleteReservation(userId, date) {
     const res = await fetch(`${API_BASE}/reservations/${userId}/${date}`, {
       method: 'DELETE',
     });
-
     const data = await res.json();
-
     if (res.ok) {
       showToast('رزرو حذف شد', 'success');
       loadReservations();
@@ -188,46 +175,12 @@ async function deleteReservation(userId, date) {
     } else {
       showToast(data.error || 'خطا در حذف رزرو', 'error');
     }
-  } catch (err) {
+  } catch {
     showToast('خطا در ارتباط با سرور', 'error');
   }
-}
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  fetchBalance();
-  renderFoods();
-  loadReservations();
-});
-
-function showToast(message, type = 'success') {
-  const toast = document.createElement('div');
-  toast.textContent = message;
-  toast.style.cssText = `
-    background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
-    color: white;
-    padding: 12px 20px;
-    border-radius: 6px;
-    margin-top: 10px;
-    font-family: "Vazirmatn", sans-serif;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-  `;
-  document.getElementById('toast-container').appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
 }
 
 function toggleAmountOptions() {
   const menu = document.getElementById('amountOptions');
   menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
 }
-
-window.addEventListener("click", function (e) {
-  const menu = document.getElementById("amountOptions");
-  const button = document.getElementById("toggleButton");
-
-  if (!e.target.closest("#amountOptions") && !e.target.closest("#toggleButton")) {
-    menu.style.display = "none";
-  }
-});

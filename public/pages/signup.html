@@ -14,52 +14,10 @@
       <input id="email" type="email" placeholder="ایمیل">
       <input id="password" type="password" placeholder="رمز عبور">
       <div id="signupError" style="color:red;"></div>
-      <button class="btn" onclick="signup()">ثبت نام </button>
+      <button class="btn" id="signupBtn">ثبت نام </button>
     </div>
   </div>
 
-  <script>
-    const API_BASE = 'http://localhost:3000/api';
-
-    async function signup() {
-      const user = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
-      const pass = document.getElementById('password').value;
-      let errorMsg = document.getElementById('signupError');
-      errorMsg.innerText = "";
-
-      if (user && email && pass) {
-        try {
-          const res = await fetch(`${API_BASE}/signup`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: user, email, password: pass }),
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            errorMsg.innerText = data.error || 'خطا در ثبت‌نام.';
-          }
-
-          if (data.error) {
-            errorMsg.innerText = data.error;
-            return
-          }
-
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('userId', data.userId);
-
-
-          window.location.href = '/public/pages/dashboard.html';
-        } catch (error) {
-          errorMsg.innerText = error.message;
-        }
-      } else {
-        errorMsg.innerText = "همه فیلدها الزامی هستند.";
-      }
-    }
-
-  </script>
+  <script type="module" src="../js/signup.js"></script>
 </body>
 </html>

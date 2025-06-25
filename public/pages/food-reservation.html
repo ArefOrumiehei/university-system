@@ -7,35 +7,38 @@
   <title>رزرو غذا</title>
 </head>
 <body>
-  <div id="toast-container" style="position: fixed; top: 20px; left: 20px; z-index: 9999;"></div>
-
   <div id="main">
     <div class="balance">
       موجودی شما: <span id="balance">0</span> تومان
       <div class="increase-amount">
-        <button id="toggleButton" onclick="toggleAmountOptions()">افزایش موجودی</button>
+        <button id="toggleButton">افزایش موجودی</button>
         <div id="amountOptions">
-          <button class="amount-btn" onclick="increaseBalance(50000)">+ ۵۰,۰۰۰</button><br>
-          <button class="amount-btn" onclick="increaseBalance(100000)">+ ۱۰۰,۰۰۰</button><br>
-          <button class="amount-btn" onclick="increaseBalance(150000)">+ ۱۵۰,۰۰۰</button>
+          <button class="amount-btn" data-amount="50000">+ ۵۰,۰۰۰</button><br>
+          <button class="amount-btn" data-amount="100000">+ ۱۰۰,۰۰۰</button><br>
+          <button class="amount-btn" data-amount="150000">+ ۱۵۰,۰۰۰</button>
         </div>
       </div>
     </div>
 
 
     <div class="form">
-      <label>رستوران:</label>
-      <select id="restaurant">
-        <option value="رستوران مرکزی">رستوران مرکزی</option>
-        <option value="رستوران شماره 2">رستوران شماره ۲</option>
-      </select>
-      <br><br>
-      <label>تاریخ:</label>
-      <input type="date" id="date">
-      <br><br>
+      <div class="inputs">
+        <div class="resturant-section">
+          <label>رستوران:</label>
+          <select id="restaurant">
+            <option value="رستوران مرکزی">رستوران مرکزی</option>
+            <option value="رستوران شماره 2">رستوران شماره ۲</option>
+          </select>
+        </div>
+
+        <div class="date-section">
+          <label>تاریخ:</label>
+          <input type="date" id="date">
+        </div>
+      </div>
       <div id="foods"></div>
       <div id="selectedMessage" class="selected-message"></div>
-      <button class="rsv-btn" onclick="addReservation()">رزرو غذا</button>
+      <button id="reserveBtn" class="rsv-btn">رزرو غذا</button>
     </div>
 
     <div class="reservation-list">

@@ -13,46 +13,10 @@
       <input id="username" type="text" placeholder="نام کاربری">
       <input id="password" type="password" placeholder="رمز عبور">
       <div id="loginError" style="color:red;"></div>
-      <button class="btn" onclick="login()">ورود</button>
+      <button class="btn" id="loginBtn">ورود</button>
     </div>
   </div>
-
-  <script>
-    const API_BASE = 'http://localhost:3000/api';
-
-    async function login() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      let errorMsg = document.getElementById('loginError')
-      errorMsg.innerText = ""
-
-      if (user && pass) {
-        try {
-          const res = await fetch(`${API_BASE}/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: user, password: pass }),
-          });
-          console.log(res);
-          const data = await res.json();
-          console.log(data);
-
-          if (data.error) {
-            errorMsg.innerText = data.error;
-            return
-          }
-
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('userId', data.userId);
-
-          window.location.href = '/public/pages/dashboard.html';
-        } catch (error) {
-          errorMsg.innerText = error.message;
-        }
-      } else {
-        errorMsg.innerText = "لطفا نام کاربری و رمز خود را وارد کنید."
-      }
-    }
-  </script>
+  
+  <script type="module" src="../js/login.js"></script>
 </body>
 </html>

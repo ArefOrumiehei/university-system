@@ -44,8 +44,9 @@
           <h3>آخرین اطلاعیه‌ها</h3>
           <ul>
             <li>⏰ حذف و اضافه تا تاریخ ۱۰ خرداد تمدید شد.</li>
-            <li>📢 شروع کلاس‌های ترم تابستان از ۲۰ تیر</li>
-            <li>📌 نمرات نیم‌سال دوم تا پایان هفته اعلام می‌شود.</li>
+            <li>📢 ترم تابستان در سال جاری به صورت مجازی برگذار میشود.</li>
+            <li>📌 تایخ نحویل پروژه ها متعاقبا اعلام خواهد شد.</li>
+            <li>📌 تاریخ برگذاری امتحانات به شهریور ماه مولکول شد.</li>
           </ul>
         </div>
       </div>
@@ -74,198 +75,6 @@
     </div>
   </div>
 
-  <script>
-    let username;
-
-    const sidebar = document.querySelector('.sidebar');
-    const hamburger = document.getElementById('hamburgerBtn');
-    const dashboard = document.getElementById('dashboard-content');
-    const settings = document.getElementById('settings-content');
-    const dynamic = document.getElementById('dynamic-content');
-
-    const routes = {
-      courses: "./dashboard/my-courses.html",
-      grades: "./dashboard/grades.html",
-      messages: "./dashboard/messages.html",
-    };
-
-    function loadContent(key) {
-      const url = routes[key];
-      sidebar.classList.remove('open');
-
-      
-
-      if (key === "settings") {
-        dashboard.style.display = 'none';
-        settings.style.display = 'block';
-        dynamic.style.display = 'none';
-      } else {
-        dashboard.style.display = 'block';
-        settings.style.display = 'none';
-        dynamic.style.display = 'block';
-      }
-
-      if (url) {
-        fetch(url)
-          .then(res => res.text())
-          .then(html => {
-            const target = key === "settings" ? settings : document.getElementById('dynamic-content');
-            target.innerHTML = html;
-          })
-          .catch(err => {
-            const target = key === "settings" ? settings : document.getElementById('dynamic-content');
-            target.innerHTML = "<p>خطا در بارگذاری محتوا</p>";
-            console.error(err);
-          });
-      }
-    }
-
-
-    document.querySelectorAll('.menu-item').forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const key = link.getAttribute('data-key');
-        loadContent(key);
-      });
-    });
-
-    window.addEventListener("DOMContentLoaded", () => {
-      loadContent("dashboard");
-    });
-
-    function clearContents() {
-      document.getElementById('dynamic-content').innerHTML = ""
-    }
-
-
-    const API_BASE = 'http://localhost:3000/api';
-    const userId = localStorage.getItem("userId");
-
-    function getUserInfo() {
-      fetch(`${API_BASE}/users/${userId}`)
-        .then(response => {
-          if (!response.ok) {
-            console.log(response);
-          };
-          return response.json();
-        })
-        .then(user => {
-          console.log('اطلاعات کاربر:', user);
-          let username = user.username;
-          const usernameEl = document.getElementById('username');
-          if (usernameEl) usernameEl.textContent = username;
-
-          const newUserNameEl = document.getElementById("new-username");
-          newUserNameEl.value = username;
-
-          const birthDate = new Date(user.birthDate);
-          const birthDateEl = document.getElementById('birth-date');
-          birthDateEl.value = birthDate.toISOString().split('T')[0];
-
-          if (user.profileImage) {
-            const avatarImg = document.getElementById("avatarImg");
-            const profileImg = document.getElementById("profile-image");
-            if (avatarImg) avatarImg.src = user.profileImage;
-            if (profileImg) profileImg.src = user.profileImage;
-          }
-        })
-        .catch(error => {
-          console.error('مشکل در دریافت اطلاعات کاربر', error);
-        });
-    }
-    
-
-    
-
-    function logout() {
-      localStorage.clear();
-      window.location.href = '/public/pages/login.html';
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      getUserInfo();
-      if (username) {
-        document.getElementById('username').textContent = username;
-      }
-    });
-
-    function toggleDropdown() {
-      const menu = document.getElementById("dropdownMenu");
-      menu.style.display = menu.style.display === "block" ? "none" : "block";
-    }
-
-    window.addEventListener("click", function (e) {
-      const menu = document.getElementById("dropdownMenu");
-      if (!e.target.closest(".avatar-wrapper")) {
-        menu.style.display = "none";
-      }
-    });
-
-
-    function previewImage(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById('profile-image').src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-
-    function saveChanges() {
-      const userId = localStorage.getItem("userId");
-      if (!userId) {
-        console.error("شناسه کاربر یافت نشد.");
-        return;
-      }
-
-      const usernameInput = document.getElementById("new-username");
-      const birthDateInput = document.getElementById("birth-date");
-      const profileImage = document.getElementById("profile-image").src;
-
-      const username = usernameInput.value.trim();
-      const birthDate = birthDateInput.value;
-      const defaultImage = window.location.origin + "/";
-
-      const data = {};
-      if (username) data.username = username;
-      if (birthDate) data.birthDate = birthDate;
-      if (profileImage && !profileImage.startsWith(defaultImage)) data.profileImage = profileImage;
-
-      if (Object.keys(data).length === 0) {
-        console.warn("هیچ فیلدی برای بروزرسانی وارد نشده است.");
-        return;
-      }
-      fetch(`http://localhost:3000/api/users/${userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-        .then(res => {
-          if (!res.ok) throw new Error("خطا در بروزرسانی");
-          return res.json();
-        })
-        .then(() => {
-          console.log("اطلاعات با موفقیت به‌روزرسانی شد.");
-          getUserInfo();
-        })
-        .catch(err => console.error("خطا:", err.message));
-    }
-
-    
-    function toggleSidebar() {
-      const sidebar = document.querySelector('.sidebar');
-      sidebar.classList.toggle('open');
-    }
-
-    window.addEventListener("click", function (e) {
-      if (!e.target.closest('.sidebar') && !e.target.closest('#hamburgerBtn')) {
-        sidebar.classList.remove('open');
-      }
-    });
-
-  </script>
+  <script type="module" src="../js/dashboard.js"></script>
 </body>
 </html>
