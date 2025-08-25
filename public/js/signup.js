@@ -1,6 +1,7 @@
 import { showToast } from '../../utils/toast.js';
+import { CONFIG } from '../config.js';
 
-const API_BASE = 'http://localhost:3000/api';
+const API_BASE = CONFIG.API_URL;
 
 async function signup() {
   const user = document.getElementById('username').value.trim();
