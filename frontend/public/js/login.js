@@ -1,5 +1,5 @@
+import { CONFIG } from '../../config.js';
 import { showToast } from '../../utils/toast.js';
-import { CONFIG } from '../config.js';
 
 const API_BASE = CONFIG.API_URL;
 
@@ -31,7 +31,7 @@ async function login() {
 
     showToast('ورود با موفقیت انجام شد', 'success');
     setTimeout(() => {
-      window.location.href = '/public/pages/dashboard.html';
+      window.location.href = '/frontend/public/pages/dashboard.html';
     }, 1500);
 
   } catch (error) {

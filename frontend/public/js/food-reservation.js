@@ -1,5 +1,5 @@
+import { CONFIG } from "../../config.js";
 import { showToast } from "../../utils/toast.js";
-import { CONFIG } from "../config.js";
 
 const API_BASE = CONFIG.API_URL;
 const foods = [

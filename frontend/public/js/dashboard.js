@@ -1,5 +1,5 @@
+import { CONFIG } from '../../config.js';
 import { showToast } from '../../utils/toast.js';
-import { CONFIG } from '../config.js';
 
 const API_BASE = CONFIG.API_URL;
 const userId = localStorage.getItem("userId");
@@ -131,7 +131,7 @@ function clearContents() {
 
 function logout() {
   localStorage.clear();
-  window.location.href = '/public/pages/login.html';
+  window.location.href = '/frontend/public/pages/login.html';
 }
 
 // Events
