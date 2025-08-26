@@ -30,29 +30,33 @@ A modern university management system with features such as:
 ## 📁 Project Structure
 
 ```
-/project-root
+/university-system
 │
-├── public/
-│   ├── pages/
-│   │   ├── login.html
-│   │   ├── signup.html
-│   │   ├── dashboard.html
-│   │   └── food-reservation.html
-│   ├── styles/
-│   │   └── *.css
-│   └── js/
-│       └── *.js
+├── frontend/
+    ├── assets/
+    ├── src/
+         ├── pages/
+            ├── login.html
+            ├── signup.html
+            ├── dashboard.html
+            └── food-reservation.html
+         ├── styles/
+            └── *.css
+         └── js/
+            └── *.js
+    ├── utils/
+      └── toast.js
+    ├── config.js
+    ├── index.html
 │
 ├── backend/
 │   ├── models/
 │   ├── routes/
 │   ├── controllers/
+│   ├── .env
 │   └── server.js
 │
-├── utils/
-│   └── toast.js
-│
-├── .env
+├── .gitignore
 └── README.md
 ```
 
@@ -68,7 +72,7 @@ npm install
 
 ### 2. Setup environment variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the backend directory:
 
 ```
 PORT=3000
@@ -84,7 +88,7 @@ cd backend
 node server
 
 # Frontend: open in browser
-http://localhost:3000/public/pages/login.html
+http://localhost:3000/frontend/index.html
 ```
 
 ---
@@ -109,12 +113,6 @@ http://localhost:3000/public/pages/login.html
 
 ---
 
-## 🧪 Testing
-
-You can use tools like **Postman** to test the backend APIs manually. For automated testing, you may integrate **Jest** or similar frameworks in the future.
-
----
-
 ## 🤝 Contributing
 
 We’d love your help improving this project! Here’s how you can contribute:
@@ -127,8 +125,8 @@ We’d love your help improving this project! Here’s how you can contribute:
 2. **Clone your fork locally**
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/University-System.git
-   cd University-System
+   git clone https://github.com/ArefOrumiehei/university-system.git
+   cd university-system
    ```
 
 3. **Create a new branch**
