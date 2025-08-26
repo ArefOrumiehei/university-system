@@ -31,7 +31,7 @@ async function login() {
 
     showToast('ورود با موفقیت انجام شد', 'success');
     setTimeout(() => {
-      window.location.href = '/frontend/public/pages/dashboard.html';
+      window.location.href = '/frontend/src/pages/dashboard.html';
     }, 1500);
 
   } catch (error) {

@@ -131,7 +131,7 @@ function clearContents() {
 
 function logout() {
   localStorage.clear();
-  window.location.href = '/frontend/public/pages/login.html';
+  window.location.href = '/frontend/src/pages/login.html';
 }
 
 // Events
